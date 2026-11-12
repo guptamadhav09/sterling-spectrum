@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const services = [
   {
@@ -98,6 +98,12 @@ const iconPaths = {
       <path d="M5 12h14M13 6l6 6-6 6" />
     </>
   ),
+  whatsapp: (
+    <>
+      <path d="M20.4 11.6a8.4 8.4 0 0 1-12.4 7.4L3.5 20l1-4.3A8.4 8.4 0 1 1 20.4 11.6Z" />
+      <path d="M8.2 7.9c.2-.5.4-.5.7-.5h.5c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4 0 .6l-.6.7c-.2.2-.2.4-.1.6.4.8 1.1 1.5 1.9 1.9.2.1.4.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .3-.2 1.3-.8 1.7-.5.4-1.1.6-1.8.4-1.1-.3-2.5-.9-3.8-2.1-1.1-1-2-2.4-2.3-3.4-.3-.8 0-1.8.4-2.4Z" />
+    </>
+  ),
 };
 
 function Icon({ name, className = "" }) {
@@ -151,12 +157,19 @@ function App() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const name = formData.get("name");
+    const phone = formData.get("phone");
     const email = formData.get("email");
     const requirement = formData.get("requirement");
+    const message = `Name: ${name}\nPhone: ${phone}\nEmail: ${email}\n\nHow can we help?\n${requirement}`;
+    if (event.nativeEvent.submitter?.value === "whatsapp") {
+      window.location.href = `https://wa.me/919211738770?text=${encodeURIComponent(
+        `Hello Sterling Spectrum, I'd like to make an enquiry.\n\n${message}`,
+      )}`;
+      return;
+    }
+
     const subject = encodeURIComponent(`Website enquiry from ${name}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nHow can we help?\n${requirement}`,
-    );
+    const body = encodeURIComponent(message);
     window.location.href = `mailto:info.sterlingspectrum@gmail.com?subject=${subject}&body=${body}`;
   }
 
@@ -217,6 +230,14 @@ function App() {
                 <a className="hero-phone" href="tel:+919211738770">
                   <span className="phone-mark">↗</span>
                   <span><small>Speak with our team</small><strong>+91 92117 38770</strong></span>
+                </a>
+                <a
+                  className="hero-whatsapp"
+                  href="https://wa.me/919211738770"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Icon name="whatsapp" /> Text us on WhatsApp
                 </a>
               </div>
               <div className="hero-note">
@@ -314,6 +335,10 @@ function App() {
                     <span className="detail-icon">@</span>
                     <span><small>Email us</small><strong>info.sterlingspectrum@gmail.com</strong></span>
                   </a>
+                  <a href="https://wa.me/919211738770" target="_blank" rel="noreferrer">
+                    <span className="detail-icon"><Icon name="whatsapp" /></span>
+                    <span><small>Text us on WhatsApp</small><strong>+91 92117 38770</strong></span>
+                  </a>
                   <div className="contact-address">
                     <span className="detail-icon">⌖</span>
                     <span><small>Visit us</small><strong>B-18, East Arjun Nagar,<br />Shahdara, Delhi – 110032</strong></span>
@@ -327,14 +352,19 @@ function App() {
                 </div>
                 <label htmlFor="name">Your name</label>
                 <input id="name" name="name" type="text" placeholder="How should we address you?" autoComplete="name" required />
+                <label htmlFor="phone">Phone number</label>
+                <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" autoComplete="tel" inputMode="tel" required />
                 <label htmlFor="email">Work email</label>
                 <input id="email" name="email" type="email" placeholder="you@company.com" autoComplete="email" required />
                 <label htmlFor="requirement">What do you need?</label>
                 <textarea id="requirement" name="requirement" rows="3" placeholder="Tell us about your products or project..." required />
-                <button className="button button-yellow form-submit" type="submit">
-                  Prepare your enquiry <Icon name="arrow" />
+                <button className="button button-yellow form-submit" type="submit" name="channel" value="email">
+                  Send enquiry by email <Icon name="arrow" />
                 </button>
-                <small className="form-footnote">Your email app will open with your enquiry ready to send.</small>
+                <button className="button form-submit form-submit-whatsapp" type="submit" name="channel" value="whatsapp">
+                  <Icon name="whatsapp" /> Send enquiry on WhatsApp
+                </button>
+                <small className="form-footnote">Your email app or WhatsApp will open with your enquiry ready to send.</small>
               </form>
             </div>
           </div>
